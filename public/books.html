@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BookStore — Browse Books</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/index.html" class="nav-brand"><i class="fas fa-book-open"></i><span>BookStore</span></a>
+      <div class="nav-links" id="navLinks">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/books.html" class="nav-link" style="color:var(--primary)">Books</a>
+        <div id="authLinks" style="display:flex;align-items:center;gap:1.5rem"></div>
+      </div>
+      <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div class="container">
+        <h1>Browse <span class="gradient-text">Books</span></h1>
+        <p>Explore our entire collection</p>
+      </div>
+    </div>
+
+    <div class="container books-page-layout">
+      <!-- Sidebar Filters -->
+      <aside class="filters-sidebar" id="filtersSidebar">
+        <div class="filters-header">
+          <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+          <button class="btn-clear-filters" id="clearFilters">Clear All</button>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Category</label>
+          <div class="filter-options" id="categoryFilters">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Price Range</label>
+          <div class="price-range">
+            <input type="number" id="minPrice" placeholder="Min $" class="price-input" min="0"/>
+            <span>—</span>
+            <input type="number" id="maxPrice" placeholder="Max $" class="price-input" min="0"/>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Sort By</label>
+          <select id="sortSelect" class="select-input">
+            <option value="">Latest</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+            <option value="title">Title A-Z</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary w-full" id="applyFilters">Apply Filters</button>
+      </aside>
+
+      <!-- Books Area -->
+      <div class="books-area">
+        <div class="books-toolbar">
+          <div class="search-bar-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="booksSearchInput" placeholder="Search books..." class="search-input-inline"/>
+          </div>
+          <span class="results-count" id="resultsCount">Loading...</span>
+          <button class="btn btn-outline btn-sm" id="toggleFilters">
+            <i class="fas fa-filter"></i> Filters
+          </button>
+        </div>
+
+        <div class="books-grid" id="booksGrid">
+          <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading books...</div>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><a href="/index.html" class="nav-brand" style="color:white"><i class="fas fa-book-open"></i> BookStore</a></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2024 BookStore.</p></div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Load categories dynamically
+    fetch('/api/books/categories')
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) {
+          const params = new URLSearchParams(window.location.search);
+          const activeCat = params.get('category') || '';
+          let html = `<label class="filter-option"><input type="radio" name="category" value="" ${!activeCat ? 'checked' : ''}/> All Categories</label>`;
+          data.categories.forEach(cat => {
+            html += `<label class="filter-option"><input type="radio" name="category" value="${cat}" ${activeCat === cat ? 'checked' : ''}/> ${cat}</label>`;
+          });
+          document.getElementById('categoryFilters').innerHTML = html;
+        }
+      });
+  </script>
+</body>
+</html>

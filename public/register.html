@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — BookStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/index.html" class="nav-brand"><i class="fas fa-book-open"></i><span>BookStore</span></a>
+      <div class="nav-links" id="navLinks">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/books.html" class="nav-link">Books</a>
+        <div id="authLinks" style="display:flex;align-items:center;gap:1.5rem"></div>
+      </div>
+      <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-logo"><i class="fas fa-book-open"></i></div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join thousands of book lovers today</p>
+
+        <form id="registerForm" class="auth-form">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="regName" class="form-input" placeholder="John Doe" required autocomplete="name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" required autocomplete="email"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+            <div class="input-eye-wrap">
+              <input type="password" id="regPassword" class="form-input" placeholder="Min. 6 characters" required autocomplete="new-password"/>
+              <button type="button" class="eye-btn" onclick="togglePass('regPassword',this)"><i class="fas fa-eye"></i></button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-full btn-lg" id="registerBtn">
+            <span class="btn-text"><i class="fas fa-user-plus"></i> Create Account</span>
+            <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+          </button>
+        </form>
+
+        <div class="auth-divider"><span>or</span></div>
+        <p class="auth-switch">Already have an account? <a href="/login.html">Sign in</a></p>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAuthStatus();
+      if (user) window.location.href = user.role === 'admin' ? '/admin/dashboard.html' : '/index.html';
+    });
+
+    function togglePass(id, btn) {
+      const input = document.getElementById(id);
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      btn.querySelector('.btn-text').classList.add('hidden');
+      btn.querySelector('.btn-loader').classList.remove('hidden');
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          body: JSON.stringify({ name: document.getElementById('regName').value, email: document.getElementById('regEmail').value, password: document.getElementById('regPassword').value })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.showToast('Account created! Redirecting...', 'success');
+          setTimeout(() => window.location.href = '/index.html', 1000);
+        } else {
+          window.showToast(data.message, 'error');
+          btn.querySelector('.btn-text').classList.remove('hidden');
+          btn.querySelector('.btn-loader').classList.add('hidden');
+          btn.disabled = false;
+        }
+      } catch (err) {
+        window.showToast('Something went wrong', 'error');
+        btn.querySelector('.btn-text').classList.remove('hidden');
+        btn.querySelector('.btn-loader').classList.add('hidden');
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
