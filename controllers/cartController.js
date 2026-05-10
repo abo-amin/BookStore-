@@ -1,8 +1,6 @@
 const Cart = require('../models/Cart');
 const Book = require('../models/Book');
 
-// @desc  Get user cart
-// @route GET /api/cart
 exports.getCart = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.book');
@@ -18,8 +16,6 @@ exports.getCart = async (req, res, next) => {
   }
 };
 
-// @desc  Add item to cart
-// @route POST /api/cart
 exports.addToCart = async (req, res, next) => {
   try {
     const { bookId, quantity = 1 } = req.body;
@@ -52,8 +48,6 @@ exports.addToCart = async (req, res, next) => {
   }
 };
 
-// @desc  Update cart item quantity
-// @route PUT /api/cart/:bookId
 exports.updateCartItem = async (req, res, next) => {
   try {
     const { quantity } = req.body;
@@ -78,8 +72,6 @@ exports.updateCartItem = async (req, res, next) => {
   }
 };
 
-// @desc  Remove item from cart
-// @route DELETE /api/cart/:bookId
 exports.removeFromCart = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ user: req.user.id });
@@ -100,8 +92,6 @@ exports.removeFromCart = async (req, res, next) => {
   }
 };
 
-// @desc  Clear entire cart
-// @route DELETE /api/cart
 exports.clearCart = async (req, res, next) => {
   try {
     await Cart.findOneAndUpdate({ user: req.user.id }, { items: [] });

@@ -16,8 +16,6 @@ const sendTokenCookie = (res, token) => {
   });
 };
 
-// @desc  Register user
-// @route POST /api/auth/register
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -40,8 +38,6 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// @desc  Login user
-// @route POST /api/auth/login
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -64,15 +60,11 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc  Logout user
-// @route GET /api/auth/logout
 exports.logout = (req, res) => {
   res.clearCookie('token');
   res.json({ success: true, message: 'Logged out successfully' });
 };
 
-// @desc  Get current user
-// @route GET /api/auth/me
 exports.getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
@@ -82,8 +74,6 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-// @desc  Update profile
-// @route PUT /api/auth/profile
 exports.updateProfile = async (req, res, next) => {
   try {
     const { name, email } = req.body;
@@ -98,8 +88,6 @@ exports.updateProfile = async (req, res, next) => {
   }
 };
 
-// @desc  Change password
-// @route PUT /api/auth/password
 exports.changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;

@@ -2,8 +2,6 @@ const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Book = require('../models/Book');
 
-// @desc  Create order (checkout)
-// @route POST /api/orders
 exports.createOrder = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.book');
@@ -47,8 +45,6 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
-// @desc  Get user's orders
-// @route GET /api/orders
 exports.getMyOrders = async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.user.id })
@@ -60,8 +56,6 @@ exports.getMyOrders = async (req, res, next) => {
   }
 };
 
-// @desc  Get single order
-// @route GET /api/orders/:id
 exports.getOrder = async (req, res, next) => {
   try {
     const order = await Order.findById(req.params.id).populate('user', 'name email');
@@ -75,8 +69,6 @@ exports.getOrder = async (req, res, next) => {
   }
 };
 
-// @desc  Get all orders (admin)
-// @route GET /api/orders/all
 exports.getAllOrders = async (req, res, next) => {
   try {
     const orders = await Order.find()
@@ -88,8 +80,6 @@ exports.getAllOrders = async (req, res, next) => {
   }
 };
 
-// @desc  Update order status (admin)
-// @route PUT /api/orders/:id/status
 exports.updateOrderStatus = async (req, res, next) => {
   try {
     const { status } = req.body;

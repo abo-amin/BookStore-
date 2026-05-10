@@ -1,7 +1,5 @@
 const Book = require('../models/Book');
 
-// @desc  Get all books (with search, filter, pagination)
-// @route GET /api/books
 exports.getBooks = async (req, res, next) => {
   try {
     const { search, category, minPrice, maxPrice, sort, page = 1, limit = 12 } = req.query;
@@ -39,8 +37,6 @@ exports.getBooks = async (req, res, next) => {
   }
 };
 
-// @desc  Get single book
-// @route GET /api/books/:id
 exports.getBook = async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id);
@@ -51,8 +47,6 @@ exports.getBook = async (req, res, next) => {
   }
 };
 
-// @desc  Get featured books
-// @route GET /api/books/featured
 exports.getFeaturedBooks = async (req, res, next) => {
   try {
     const books = await Book.find({ featured: true }).limit(6);
@@ -62,8 +56,6 @@ exports.getFeaturedBooks = async (req, res, next) => {
   }
 };
 
-// @desc  Create book (admin)
-// @route POST /api/books
 exports.createBook = async (req, res, next) => {
   try {
     const book = await Book.create(req.body);
@@ -73,8 +65,6 @@ exports.createBook = async (req, res, next) => {
   }
 };
 
-// @desc  Update book (admin)
-// @route PUT /api/books/:id
 exports.updateBook = async (req, res, next) => {
   try {
     const book = await Book.findByIdAndUpdate(req.params.id, req.body, {
@@ -88,8 +78,6 @@ exports.updateBook = async (req, res, next) => {
   }
 };
 
-// @desc  Delete book (admin)
-// @route DELETE /api/books/:id
 exports.deleteBook = async (req, res, next) => {
   try {
     const book = await Book.findByIdAndDelete(req.params.id);
@@ -100,8 +88,6 @@ exports.deleteBook = async (req, res, next) => {
   }
 };
 
-// @desc  Get categories list
-// @route GET /api/books/categories
 exports.getCategories = async (req, res, next) => {
   try {
     const categories = await Book.distinct('category');
